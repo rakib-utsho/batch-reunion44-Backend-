@@ -14,6 +14,6 @@ router.post("/register", authStudent.registerUser);
 router.post("/login", authStudent.loginStudent);
 
 //get profile
-router.get("/getMe", authMiddleware.authStudentMiddleware, authStudent.getMe);
+router.get("/getMe", authMiddleware.protect, authStudent.getMe);
 
 module.exports = router;
