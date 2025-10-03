@@ -1,13 +1,11 @@
 const express = require("express");
 const authStudent = require("../controllers/authController");
 const authMiddleware = require("../middleware/authMiddleware");
-const multer = require("multer");
+// Import the multer Cloudinary parser
+const parser = require("../utils/fileUploader");
 
 const router = express.Router();
 
-const upload = multer({
-  storage: multer.memoryStorage(),
-});
 
 //public routes
 router.post("/register", authStudent.registerUser);
@@ -15,5 +13,13 @@ router.post("/login", authStudent.loginStudent);
 
 //get profile
 router.get("/getMe", authMiddleware.protect, authStudent.getMe);
+
+//update profile
+router.put(
+  "/updateProfile",
+  authMiddleware.protect,
+  parser.single("profileImage"),
+  authStudent.updateProfile
+);
 
 module.exports = router;

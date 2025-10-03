@@ -20,22 +20,28 @@ const protect = asyncHandler(async (req, res, next) => {
       req.student = await Student.findById(decoded.id).select("-password");
 
       if (!req.student) {
-        res.status(401);
-        throw new Error("Not authorized, student not found");
+        res.status(401).json({
+          success: false,
+          message: "Not authorized, student not found",
+        });
       }
 
       return next();
     } catch (error) {
       console.error("Token verification failed:", error.message);
-      res.status(401);
-      throw new Error("Not authorized, token failed");
+      res.status(401).json({
+        success: false,
+        message: "Not authorized, token failed",
+      });
     }
   }
 
   // If no token was provided
   if (!token) {
-    res.status(401);
-    throw new Error("Not authorized, no token provided");
+    res.status(401).json({
+      success: false,
+      message: "Not authorized, no token provided",
+    });
   }
 });
 

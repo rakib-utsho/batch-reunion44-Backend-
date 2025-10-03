@@ -2,6 +2,7 @@ const StudentModel = require("../models/Student.model");
 
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const parser = require("../utils/fileUploader");
 
 // register user controller
 async function registerUser(req, res) {
@@ -93,6 +94,7 @@ async function loginStudent(req, res) {
   });
 }
 
+//get the profile
 async function getMe(req, res) {
   try {
     const student = await StudentModel.findById(req.student._id);
@@ -129,8 +131,49 @@ async function getMe(req, res) {
   }
 }
 
+//update profile
+async function updateProfile(req, res) {
+  try {
+    const updateFields = req.body.data ? JSON.parse(req.body.data) : {};
+
+    // If file uploaded, get URL from Cloudinary
+    if (req.file && req.file.path) {
+      updateFields.profileImage = req.file.path;
+    }
+	// Always mark profile complete
+
+	updateFields.isProfileComplete = true;
+
+
+    const student = await StudentModel.findByIdAndUpdate(
+      req.student._id,
+      updateFields,
+      { new: true, runValidators: true }
+    ).select("-password");
+
+    if (!student) {
+      return res.status(404).json({
+        success: false,
+        message: "Student not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Profile updated successfully",
+      data: { student },
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
+}
+
 module.exports = {
   registerUser,
   loginStudent,
   getMe,
+  updateProfile,
 };
