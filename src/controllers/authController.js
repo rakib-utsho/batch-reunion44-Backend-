@@ -8,6 +8,7 @@ const { sendEmail } = require("../utils/mailer");
 const {
   verificationEmail,
   resetPasswordEmail,
+  welcomeEmail,
 } = require("../utils/emailtemplete");
 
 // register user controller
@@ -86,6 +87,12 @@ async function verifyAccount(req, res) {
     student.otp = null;
     student.otpExpires = null;
     await student.save();
+
+    await sendEmail(
+      email,
+      "Welcome Home, Graduate of Batch 44!",
+      welcomeEmail(student.name)
+    );
 
     return res
       .status(200)
