@@ -6,7 +6,6 @@ const parser = require("../utils/fileUploader");
 
 const router = express.Router();
 
-
 //public routes
 router.post("/register", authStudent.registerUser);
 router.post("/login", authStudent.loginStudent);
@@ -21,5 +20,9 @@ router.put(
   parser.single("profileImage"),
   authStudent.updateProfile
 );
+
+// admin / general routes
+router.get("/all_students", authStudent.getAllStudents);
+router.get("/student/:id", authStudent.getStudentById);
 
 module.exports = router;

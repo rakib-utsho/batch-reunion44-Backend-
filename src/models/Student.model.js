@@ -55,6 +55,11 @@ const StudentSchema = new mongoose.Schema(
       },
     ],
 
+    // Verification and password reset
+    isVerified: { type: Boolean, default: false },
+    otp: { type: String },
+    otpExpires: { type: Date },
+
     // Other details
     isProfileComplete: {
       type: Boolean,
