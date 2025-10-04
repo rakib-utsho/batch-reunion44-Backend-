@@ -45,7 +45,7 @@ async function registerUser(req, res) {
     await sendEmail(
       email,
       "Verify your account - OTP",
-      verificationEmail(otp, "account verification")
+      verificationEmail(name, otp)
     );
 
     return res.status(201).json({
@@ -158,7 +158,7 @@ async function forgetPassword(req, res) {
     await sendEmail(
       email,
       "Reset Password OTP",
-      resetPasswordEmail(otp, "password reset")
+      resetPasswordEmail(student.name, otp)
     );
 
     return res

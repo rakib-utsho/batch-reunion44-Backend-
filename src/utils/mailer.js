@@ -19,7 +19,7 @@ exports.sendEmail = async (to, subject, html) => {
     console.log("✅ SMTP connection successful");
 
     await transporter.sendMail({
-      from: `"University Forum" <${process.env.EMAIL_USER}>`,
+      from: `"Batch of 44" <${process.env.EMAIL_USER}>`,
       to,
       subject,
       html,
