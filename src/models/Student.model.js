@@ -30,6 +30,10 @@ const StudentSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    phone: {
+      type: Number,
+      required: true,
+    },
 
     //profile update data
     profileImage: {
@@ -59,6 +63,8 @@ const StudentSchema = new mongoose.Schema(
     isVerified: { type: Boolean, default: false },
     otp: { type: String },
     otpExpires: { type: Date },
+    resetPasswordOTP: { type: String },
+    resetPasswordExpires: { type: Date },
 
     // Other details
     isProfileComplete: {

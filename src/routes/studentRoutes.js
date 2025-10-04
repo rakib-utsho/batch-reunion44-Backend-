@@ -6,9 +6,10 @@ const parser = require("../utils/fileUploader");
 
 const router = express.Router();
 
-//public routes
+//auth
 router.post("/register", authStudent.registerUser);
 router.post("/login", authStudent.loginStudent);
+router.post("/verify_account", authStudent.verifyAccount);
 
 //get profile
 router.get("/getMe", authMiddleware.protect, authStudent.getMe);
