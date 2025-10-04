@@ -3,6 +3,7 @@ dotenv.config();
 
 const express = require("express");
 const cookieParser = require("cookie-parser");
+const cors = require("cors");
 const connectDB = require("./src/config/db");
 const path = require("path");
 const studentRoutes = require("./src/routes/studentRoutes");
@@ -12,17 +13,23 @@ connectDB();
 
 const app = express();
 
+// ✅ CORS configuration
+const corsOption = {
+  origin: process.env.CLIENT_URL || "*",
+  credentials: true,
+};
+app.use(cors(corsOption));
+
 app.use(express.json());
 app.use(cookieParser());
 
+const PORT = process.env.PORT || 5000;
 //routes
 app.get("/", (req, res) => {
-  res.send("Hello, World!");
+  res.send("Hello Railway!");
 });
 
 app.use("/api/v1", studentRoutes);
-
-const PORT = process.env.PORT || 5000;
 
 app.listen(
   PORT,
