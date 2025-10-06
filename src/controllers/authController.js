@@ -241,166 +241,73 @@ async function setNewPassword(req, res) {
   }
 }
 
-//get the profile
-async function getMe(req, res) {
+//resend verify otp
+async function resendVerifyOtp(req, res) {
   try {
-    const student = await StudentModel.findById(req.student._id);
-    if (!student) {
-      return res.status(404).json({
-        success: false,
-        message: "Student not found",
-      });
-    }
-    res.status(200).json({
-      success: true,
-      data: {
-        student: {
-          id: student._id,
-          name: student.name,
-          email: student.email,
-          studentId: student.studentId,
-          intake: student.intake,
-          section: student.section,
-          profileImage: student.profileImage,
-          location: student.location,
-          higherEducation: student.higherEducation,
-          jobInfo: student.jobInfo,
-          isProfileComplete: student.isProfileComplete,
-          isAdmin: student.isAdmin,
-        },
-      },
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
-  }
-}
-
-//update student profile
-async function updateProfile(req, res) {
-  try {
-    const updateFields = req.body.data ? JSON.parse(req.body.data) : {};
-
-    // If file uploaded, get URL from Cloudinary
-    if (req.file && req.file.path) {
-      updateFields.profileImage = req.file.path;
-    }
-    // Always mark profile complete
-
-    updateFields.isProfileComplete = true;
-
-    const student = await StudentModel.findByIdAndUpdate(
-      req.student._id,
-      updateFields,
-      { new: true, runValidators: true }
-    ).select("-password");
+    const { email } = req.body;
+    const student = await StudentModel.findOne({ email });
 
     if (!student) {
-      return res.status(404).json({
-        success: false,
-        message: "Student not found",
-      });
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
     }
 
-    res.status(200).json({
+    if (student.isVerified) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Account already verified" });
+    }
+
+    const otp = generateOtp();
+    student.otp = await hashOtp(otp);
+    student.otpExpires = Date.now() + 10 * 60 * 1000; // 10 minutes
+    await student.save();
+
+    await sendEmail(
+      email,
+      "Resend Verification OTP",
+      verificationEmail(student.name, otp)
+    );
+
+    return res.status(200).json({
       success: true,
-      message: "Profile updated successfully",
-      data: { student },
+      message: "OTP resent successfully. Please check your email.",
     });
   } catch (err) {
-    res.status(500).json({
-      success: false,
-      message: err.message,
-    });
+    res.status(500).json({ success: false, message: err.message });
   }
 }
 
-// GET ALL STUDENTS with Pagination
-async function getAllStudents(req, res) {
+// ======== RESEND RESET PASSWORD OTP =========
+async function resendResetOtp(req, res) {
   try {
-    // query params ?page=1&limit=10
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
-
-    const skip = (page - 1) * limit;
-
-    //search filters
-    const { name, studentId, location, jobTitle, degree } = req.query;
-
-    let filter = {};
-
-    if (name) {
-      filter.name = { $regex: name, $options: "i" }; // case-insensitive search
+    const { email } = req.body;
+    const student = await StudentModel.findOne({ email });
+    if (!student) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
     }
 
-    if (studentId) {
-      filter.studentId = { $regex: studentId, $options: "i" };
-    }
+    const otp = generateOtp();
+    student.resetPasswordOTP = await hashOtp(otp);
+    student.resetPasswordExpires = Date.now() + 10 * 60 * 1000;
 
-    if (location) {
-      filter.location = { $regex: location, $options: "i" };
-    }
+    await student.save();
 
-    if (jobTitle) {
-      filter["jobInfo.jobTitle"] = { $regex: jobTitle, $options: "i" };
-    }
+    await sendEmail(
+      email,
+      "Resend Reset Password OTP",
+      resetPasswordEmail(student.name, otp)
+    );
 
-    if (degree) {
-      filter["higherEducation.degree"] = { $regex: degree, $options: "i" };
-    }
-
-    const totalStudents = await StudentModel.countDocuments(filter);
-    const students = await StudentModel.find(filter)
-      .select("-password")
-      .skip(skip)
-      .limit(limit)
-      .sort({ createdAt: -1 }); // latest first
-
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
-      meta: {
-        total: totalStudents,
-        page,
-        limit,
-        totalPages: Math.ceil(totalStudents / limit),
-        hasNextPage: page * limit < totalStudents,
-        hasPrevPage: page > 1,
-      },
-      data: students,
+      message: "Reset OTP resent successfully. Please check your email.",
     });
   } catch (err) {
-    res.status(500).json({
-      success: false,
-      message: err.message,
-    });
-  }
-}
-
-// GET STUDENT BY ID
-async function getStudentById(req, res) {
-  try {
-    const { id } = req.params;
-
-    const student = await StudentModel.findById(id).select("-password");
-
-    if (!student) {
-      return res.status(404).json({
-        success: false,
-        message: "Student not found",
-      });
-    }
-
-    res.status(200).json({
-      success: true,
-      data: student,
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+    res.status(500).json({ success: false, message: err.message });
   }
 }
 
@@ -411,8 +318,6 @@ module.exports = {
   forgetPassword,
   verifyResetOtp,
   setNewPassword,
-  getMe,
-  updateProfile,
-  getAllStudents,
-  getStudentById,
+  resendVerifyOtp,
+  resendResetOtp,
 };
