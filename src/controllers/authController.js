@@ -1,5 +1,4 @@
 const StudentModel = require("../models/Student.model");
-
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 // const parser = require("../utils/fileUploader");

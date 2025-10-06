@@ -6,6 +6,7 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const connectDB = require("./src/config/db");
 const path = require("path");
+const authRoutes = require("./src/routes/authRoutes");
 const studentRoutes = require("./src/routes/studentRoutes");
 
 //Connect to Database
@@ -29,6 +30,7 @@ app.get("/", (req, res) => {
   res.send("Hello Railway!");
 });
 
+app.use("/api/v1", authRoutes);
 app.use("/api/v1", studentRoutes);
 
 app.listen(
