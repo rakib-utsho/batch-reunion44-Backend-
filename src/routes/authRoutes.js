@@ -4,20 +4,20 @@ const authStudent = require("../controllers/authController");
 const router = express.Router();
 
 //Register User
-router.post("/register", authStudent.registerUser);
+router.post("/auth/register", authStudent.registerUser);
 //Login User
-router.post("/login", authStudent.loginStudent);
+router.post("/auth/login", authStudent.loginStudent);
 //Verify User Account
-router.post("/verify_account", authStudent.verifyAccount);
+router.post("/auth/verify_account", authStudent.verifyAccount);
 //Resend Verify otp
-router.post("/resend-register-otp", authStudent.resendVerifyOtp);
+router.post("/auth/resend-register-otp", authStudent.resendVerifyOtp);
 //forget password
-router.post("/forget-password", authStudent.forgetPassword);
+router.post("/auth/forget-password", authStudent.forgetPassword);
 //verify Reset otp
-router.post("/verify-reset-otp", authStudent.verifyResetOtp);
+router.post("/auth/verify-reset-otp", authStudent.verifyResetOtp);
 //set new password
-router.post("/set-new-password", authStudent.setNewPassword);
+router.post("/auth/set-new-password", authStudent.setNewPassword);
 //resend reset otp
-router.post("/resend-reset-otp", authStudent.resendResetOtp);
+router.post("/auth/resend-reset-otp", authStudent.resendResetOtp);
 
 module.exports = router;
