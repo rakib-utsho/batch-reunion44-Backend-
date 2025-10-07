@@ -18,5 +18,18 @@ router.post(
   postImageParser.single("postImage"),
   postController.createPost
 );
+// Update a post (protected route)
+router.put(
+  "/post/:id",
+  authMiddleware.protect,
+  postImageParser.single("postImage"),
+  postController.updatePost
+);
+// Delete a post (protected route)
+router.delete("/post/:id", authMiddleware.protect, postController.deletePost);
+// Like/Unlike a post (protected route)
+router.post("/post/:id/like", authMiddleware.protect, postController.likeUnlikePost);
+// Add a comment to a post (protected route)
+router.post("/post/:id/comment", authMiddleware.protect, postController.addComment);
 
 module.exports = router;
