@@ -8,6 +8,7 @@ const connectDB = require("./src/config/db");
 const path = require("path");
 const authRoutes = require("./src/routes/authRoutes");
 const studentRoutes = require("./src/routes/studentRoutes");
+const postRoutes = require("./src/routes/postRoutes");
 
 //Connect to Database
 connectDB();
@@ -32,6 +33,7 @@ app.get("/", (req, res) => {
 
 app.use("/api/v1", authRoutes);
 app.use("/api/v1", studentRoutes);
+app.use("/api/v1", postRoutes);
 
 app.listen(
   PORT,
