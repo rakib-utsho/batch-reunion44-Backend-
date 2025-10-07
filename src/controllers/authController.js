@@ -180,7 +180,7 @@ async function verifyResetOtp(req, res) {
   try {
     const { email, otp } = req.body;
 
-    const student = await Student.findOne({ email });
+    const student = await StudentModel.findOne({ email });
     if (!student)
       return res
         .status(404)
@@ -213,7 +213,7 @@ async function setNewPassword(req, res) {
   try {
     const { email, newPassword } = req.body;
 
-    const student = await Student.findOne({ email });
+    const student = await StudentModel.findOne({ email });
     if (!student)
       return res
         .status(404)
