@@ -16,12 +16,28 @@ connectDB();
 const app = express();
 
 // ✅ CORS configuration
-const corsOption = {
-  origin: process.env.CLIENT_URL || "*",
+const allowedOrigins = [
+  "http://localhost:3000",
+  "http://localhost:3001",
+  "https://44frontend.vercel.app",
+];
+
+const corsOptions = {
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps or curl)
+    if (!origin) return callback(null, true);
+
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
   credentials: true,
 };
-app.use(cors(corsOption));
 
+// ✅ Apply CORS middleware BEFORE routes
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
 
