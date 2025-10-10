@@ -1,6 +1,6 @@
 const StudentModel = require("../models/Student.model");
 
-//get the profile
+// Get student profile
 async function getMe(req, res) {
   try {
     const student = await StudentModel.findById(req.student._id);
@@ -24,6 +24,7 @@ async function getMe(req, res) {
           location: student.location,
           higherEducation: student.higherEducation,
           jobInfo: student.jobInfo,
+          socialLinks: student.socialLinks,
           isProfileComplete: student.isProfileComplete,
           isAdmin: student.isAdmin,
         },
@@ -47,6 +48,19 @@ async function updateProfile(req, res) {
       updateFields.profileImage = req.file.path;
     }
     // Always mark profile complete
+
+    if (updateFields.socialLinks) {
+      const { github, linkedin, facebook, twitter, portfolio } =
+        updateFields.socialLinks;
+
+      updateFields.socialLinks = {
+        github,
+        linkedin,
+        facebook,
+        twitter,
+        portfolio,
+      };
+    }
 
     updateFields.isProfileComplete = true;
 

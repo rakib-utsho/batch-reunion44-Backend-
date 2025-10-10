@@ -1,5 +1,16 @@
 const mongoose = require("mongoose");
 
+const JobSchema = new mongoose.Schema(
+  {
+    jobTitle: { type: String },
+    company: { type: String },
+    startDate: { type: Date },
+    endDate: { type: Date },
+    current: { type: Boolean, default: false },
+  },
+  { _id: false } // prevent creating extra _id for each subdocument
+);
+
 const StudentSchema = new mongoose.Schema(
   {
     // Registration Data
@@ -49,15 +60,25 @@ const StudentSchema = new mongoose.Schema(
         yearCompleted: { type: String },
       },
     ],
-    jobInfo: [
-      {
-        jobTitle: { type: String },
-        company: { type: String },
-        startDate: { type: Date },
-        endDate: { type: Date },
-        current: { type: Boolean, default: false },
+    jobInfo: {
+      type: [JobSchema],
+      validate: {
+        validator: function (jobs) {
+          // each job must have endDate if current is false
+          return jobs.every((job) => job.current === true || !!job.endDate);
+        },
+        message: "Each job must have an endDate if current is false",
       },
-    ],
+    },
+
+    // ✅ Social media links
+    socialLinks: {
+      github: { type: String },
+      linkedin: { type: String },
+      facebook: { type: String },
+      twitter: { type: String },
+      portfolio: { type: String }, // optional — for personal site
+    },
 
     // Verification and password reset
     isVerified: { type: Boolean, default: false },
