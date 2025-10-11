@@ -16,7 +16,7 @@ router.post("/auth/forget-password", authStudent.forgetPassword);
 //verify Reset otp
 router.post("/auth/verify-reset-otp", authStudent.verifyResetOtp);
 //set new password
-router.post("/auth/set-new-password", authStudent.setNewPassword);
+router.post("/auth/reset-password", authStudent.setNewPassword);
 //resend reset otp
 router.post("/auth/resend-reset-otp", authStudent.resendResetOtp);
 
