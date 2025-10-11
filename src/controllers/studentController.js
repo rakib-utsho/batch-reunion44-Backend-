@@ -3,7 +3,9 @@ const StudentModel = require("../models/Student.model");
 // Get student profile
 async function getMe(req, res) {
   try {
-    const student = await StudentModel.findById(req.student._id);
+    const student = await StudentModel.findById(req.student._id).select(
+      "-password"
+    );
     if (!student) {
       return res.status(404).json({
         success: false,
@@ -13,21 +15,7 @@ async function getMe(req, res) {
     res.status(200).json({
       success: true,
       data: {
-        student: {
-          id: student._id,
-          name: student.name,
-          email: student.email,
-          studentId: student.studentId,
-          intake: student.intake,
-          section: student.section,
-          profileImage: student.profileImage,
-          location: student.location,
-          higherEducation: student.higherEducation,
-          jobInfo: student.jobInfo,
-          socialLinks: student.socialLinks,
-          isProfileComplete: student.isProfileComplete,
-          isAdmin: student.isAdmin,
-        },
+        student,
       },
     });
   } catch (error) {
