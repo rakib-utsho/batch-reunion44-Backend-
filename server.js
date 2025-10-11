@@ -19,7 +19,7 @@ const app = express();
 const allowedOrigins = [
   "http://localhost:3000",
   "http://localhost:3001",
-  "https://44frontend.vercel.app",
+  "https://batch44-hub.vercel.app",
 ];
 
 const corsOptions = {
